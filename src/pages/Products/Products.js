@@ -4,34 +4,25 @@ import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import styles from "./Products.style";
 
 import ProductCard from "../../components/ProductCard";
+import useFetch from "../../hooks/useFetch";
 
 const URL = "https://fakestoreapi.com/products";
 
 const Products = (props) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  
+  const {data,loading,error} = useFetch(URL);
 
-  const fetchData = async () => {
-    try {
-      const { data: productData } = await axios.get(URL);
-      setProducts(productData);
-      setLoading(false);
-       }
-    catch (error){
-      setLoading(false);
-      setError(error.message);
-    }
-
+  const onPress =  id => {
+    props.navigation.navigate("ProductDetail",{id});
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const onPress = () => {
-    props.navigation.navigate("ProductDetail");
-  };
+  const renderProduct = ({item})=> {
+    return(
+    <ProductCard 
+      product={item} 
+      onPress={() => onPress(item.id)}
+    />)
+  }
 
   if (loading) {
 
@@ -46,14 +37,8 @@ const Products = (props) => {
   return (
     <View>
         <FlatList
-          data={products}
-          renderItem={(item) => (
-            <ProductCard 
-              product={item} 
-              onPress={onPress} 
-              />
-
-              )}
+          data={data}
+          renderItem={renderProduct}
         />
     </View>
   );
