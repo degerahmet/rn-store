@@ -7,27 +7,54 @@ import ProductCard from "../../components/ProductCard";
 
 const URL = "https://fakestoreapi.com/products";
 
-const Products = () => {
-  const [products, setProducts] = useState();
+const Products = (props) => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const getProducts = async () => {
-    const response = await axios.get(URL);
-    setLoading(false);
-    setProducts(response.data);
+  const fetchData = async () => {
+    try {
+      const { data: productData } = await axios.get(URL);
+      setProducts(productData);
+      setLoading(false);
+       }
+    catch (error){
+      setLoading(false);
+      setError(error.message);
+    }
+
   };
 
   useEffect(() => {
-    getProducts();
+    fetchData();
   }, []);
+
+  const onPress = () => {
+    props.navigation.navigate("ProductDetail");
+  };
+
+  if (loading) {
+
+    return <ActivityIndicator size="large" color="#FCA311" />;
+  }
+
+  if (error) {
+
+    return <Text>{error}</Text>
+  }
 
   return (
     <View>
-      {loading ? (
-        <ActivityIndicator size="large" color="#FCA311" />
-      ) : (
-        <FlatList data={products} renderItem={(item) => <ProductCard product={item}/>}/>
-      )}
+        <FlatList
+          data={products}
+          renderItem={(item) => (
+            <ProductCard 
+              product={item} 
+              onPress={onPress} 
+              />
+
+              )}
+        />
     </View>
   );
 };

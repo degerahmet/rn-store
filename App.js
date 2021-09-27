@@ -5,13 +5,26 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {createStackNavigator} from "@react-navigation/stack";
 
-import Home from "./src/pages/Home/Home";
+
+import Products from "./src/pages/Products/Products";
 import Categories from "./src/pages/Categories/Categories";
+import ProductDetail from "./src/pages/ProductDetail";
 
 import Header from './src/components/Header';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function HomeStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Products" component={Products} />
+      <Stack.Screen name="ProductDetail" component={ProductDetail}/>
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
   return (
@@ -21,7 +34,7 @@ export default function App() {
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
-          component={Home}
+          component={HomeStack}
           options={{
             headerShown: false,
             tabBarIcon: () => {
